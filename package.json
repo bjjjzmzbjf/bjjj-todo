@@ -1,0 +1,68 @@
+{
+  "name": "bjjj-todo",
+  "version": "1.0.0",
+  "description": "不急及及代办 · bjjj todo：持续显示未完成事项的桌面待办",
+  "author": "bjjj todo",
+  "main": "desktop.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test core.test.js migrate-data.test.cjs month-calendar.test.cjs",
+    "build": "electron-builder --win portable --x64",
+    "prebuild": "node scripts/ensure-electron.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3",
+    "playwright": "1.64.1"
+  },
+  "build": {
+    "appId": "local.bjjj.todo",
+    "productName": "不急及及代办 - bjjj todo",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "preload.js",
+      "core.js",
+      "index.html",
+      "renderer.js",
+      "style.css",
+      "icon.png",
+      "desktop.cjs",
+      "widget.html",
+      "widget.js",
+      "appearance.js",
+      "date-ui.js",
+      "locale-zh.js",
+      "THIRD-PARTY-NOTICES.txt",
+      "icon.ico",
+      "migrate-data.cjs",
+      "overview.html",
+      "overview.js",
+      "month-calendar.js",
+      "LICENSE"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico",
+      "signExecutable": false
+    },
+    "portable": {
+      "artifactName": "bjjj todo.exe"
+    },
+    "compression": "normal",
+    "electronDist": "node_modules/electron/dist",
+    "executableName": "bjjj todo"
+  },
+  "dependencies": {
+    "air-datepicker": "^3.6.0",
+    "lunar-javascript": "^1.7.7"
+  },
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bjjjzmzbjf/bjjj-todo.git"
+  },
+  "homepage": "https://github.com/bjjjzmzbjf/bjjj-todo"
+}

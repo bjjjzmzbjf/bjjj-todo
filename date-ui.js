@@ -1,0 +1,10 @@
+let duePicker;
+function updateDueLabel(){const value=document.getElementById('due').value;document.getElementById('due-label').textContent=value?new Date(value).toLocaleString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit'}):'选择日期与时间（可选）';}
+document.getElementById('choose-due').onclick=()=>{
+ const dialog=document.getElementById('date-dialog');dialog.showModal();
+ if(!duePicker){duePicker=new AirDatepicker('#date-calendar',{inline:true,locale:window.dateLocaleZh,firstDay:1,timepicker:true,dateFormat:'yyyy-MM-dd',timeFormat:'HH:mm',toggleSelected:false,minutesStep:1});const hint=document.createElement('p');hint.className='time-guide';hint.textContent='上方滑块选择小时 · 下方滑块选择分钟';document.getElementById('date-calendar').append(hint);duePicker.$datepicker.querySelector('input[name=hours]').setAttribute('aria-label','小时');duePicker.$datepicker.querySelector('input[name=minutes]').setAttribute('aria-label','分钟');}
+ const value=document.getElementById('due').value;const date=value?new Date(value):new Date();if(!value)date.setHours(17,0,0,0);duePicker.selectDate(date,{silent:true,updateTime:true});duePicker.setViewDate(date);
+};
+for(const [id,offset] of [['date-today',0],['date-tomorrow',1]])document.getElementById(id).onclick=()=>{const d=new Date();d.setDate(d.getDate()+offset);const old=duePicker.selectedDates[0];d.setHours(old?.getHours()??17,old?.getMinutes()??0,0,0);duePicker.selectDate(d,{updateTime:true});duePicker.setViewDate(d);};
+document.getElementById('date-confirm').onclick=()=>{const d=duePicker.selectedDates[0];if(!d)return;const pad=n=>String(n).padStart(2,'0');document.getElementById('due').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;updateDueLabel();document.getElementById('date-dialog').close();};
+document.getElementById('date-clear').onclick=()=>{document.getElementById('due').value='';updateDueLabel();document.getElementById('date-dialog').close();};

@@ -1,0 +1,31 @@
+name: 问题反馈
+description: 报告使用过程中遇到的问题
+title: "[问题] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 软件版本
+      placeholder: 例如 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows 版本
+      placeholder: 例如 Windows 11 x64
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤与实际表现
+      description: 请移除截图、日志中的个人事项与账号信息。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
