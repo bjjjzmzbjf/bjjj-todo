@@ -33,3 +33,5 @@ window.bjjjTodo.onSelectDay(async data=>{
  if(data.date){selected=new Date(data.date+'T12:00:00');weekStart=new Date(selected);weekStart.setHours(0,0,0,0);weekStart.setDate(weekStart.getDate()-(weekStart.getDay()+6)%7);render();}
  if(data.id)edit(data.id);else if(data.create){edit(null);if(data.date){$('due').value=data.date+'T17:00';updateDueLabel();}}
 });
+
+$('desktop-shortcut').onclick=async()=>{try{await call('desktop-shortcut');toast('桌面快捷方式已创建');}catch(e){toast(e.message);}};

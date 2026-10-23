@@ -49,3 +49,5 @@
 Node.js 24。安装依赖：`npm ci`；启动：`npm start`；逻辑检查：`npm test`；打包：`npm run build`。打包后可运行 `node overview-smoke.cjs` 检查月历和窗口协同，`node names-smoke.cjs` 检查命名。
 
 应用图标使用用户提供的原图。日期面板使用 Air Datepicker，农历标签使用 lunar-javascript，许可保留在 `THIRD-PARTY-NOTICES.txt`。软件尚无数字签名。
+
+桌面快捷方式：打包版首次运行时自动创建“不急及及代办”快捷方式；可在设置中点击“创建桌面快捷方式”补建。请将免安装程序放在固定目录；移动文件后请重新创建快捷方式。

@@ -98,3 +98,5 @@ npm run build
 打包输出位于 `release/`。窗口协同检查：先执行 `npx electron-builder --win --x64 --dir`，再运行 `node overview-smoke.cjs` 和 `node names-smoke.cjs`。生成校验文件：`node scripts/release-checksum.cjs`。
 
 更多使用细节见 [使用指南](USAGE.md)。
+
+桌面快捷方式：打包版首次运行时自动创建“不急及及代办”快捷方式；可在设置中点击“创建桌面快捷方式”补建。请将免安装程序放在固定目录；移动文件后请重新创建快捷方式。
