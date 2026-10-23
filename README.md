@@ -14,7 +14,7 @@
 
 ## 下载使用
 
-进入 [软件下载页面](https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest)，下载 Assets 下的 **bjjj todo.exe**。
+进入 [软件下载页面](https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest)，下载 Assets 下的 **bjjj.todo.exe**。
 
 1. 将程序放在固定目录，双击运行，无需安装。
 2. 点“＋ 新建”添加事项，设置重要性、类型、截止时间和提醒。

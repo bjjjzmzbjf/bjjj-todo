@@ -4,7 +4,7 @@
 
 ## 下载
 
-下载本页 Assets 中的 **bjjj todo.exe**，放在固定目录后双击运行，无需安装。可使用 **SHA256SUMS.txt** 核对下载文件。
+下载本页 Assets 中的 **bjjj.todo.exe**，放在固定目录后双击运行，无需安装。可使用 **SHA256SUMS.txt** 核对下载文件。
 
 GitHub 自动生成的 Source code 压缩包是完整源码；直接使用请下载 exe。
 
