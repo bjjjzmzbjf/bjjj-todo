@@ -3,8 +3,8 @@
 <h1 align="center">不急及及代办 · bjjj todo</h1>
 
 <p align="center"><b>未完成的事，留在眼前。重要的节点，提前记住。</b></p>
-<p align="center">Windows x64 · 免安装 · 本地保存 · MIT 开源</p>
-<p align="center"><a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest"><b>↓ 下载 Windows 版</b></a>　·　<a href="#从记录到完成">功能与截图</a>　·　<a href="#三步开始使用">开始使用</a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/issues">反馈与建议</a></p>
+<p align="center">Windows 免安装 · Android 桌面组件 · 本地保存 · MIT 开源</p>
+<p align="center"><a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest"><b>↓ 下载 Windows 版</b></a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/android-v1.0.0"><b>↓ 下载 Android 版</b></a>　·　<a href="#从记录到完成">功能与截图</a>　·　<a href="#三步开始使用">开始使用</a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/issues">反馈与建议</a></p>
 
 论文还有几张图要改，明天的会议需要准备，周末也有自己的安排。事情写下来了，却可能随着翻页、切换日期，又被忘在一边。
 
@@ -19,9 +19,19 @@
 | 工作时随手看一眼安排 | 桌面浮窗显示今日待办与最近三项，支持置顶和直接勾选 |
 | 看清这个月的节奏 | 月历总览集中展示事项，支持类型、等级和关键词筛选 |
 
+## Android：把待办铺到一页手机桌面
+
+现已提供 **Android 1.0.0**（Android 8.0及以上）。原生桌面小组件支持“今日待办＋全部未完成”、滚动与分页、直接勾选完成，以及背景不透明度调整。App内可新建、编辑、分类和设置多个提前提醒。
+
+1. 从 [安卓版下载页](https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/android-v1.0.0) 下载 `bjjj.todo.android.apk` 并安装。
+2. 打开App添加事项，点击“添加桌面小组件”；也可以长按桌面空白处 → 小组件 → 不急及及代办。
+3. 把组件拖到一张空白桌面，长按组件并拉伸边框。实际大小及边距由手机桌面决定。
+
+手机与电脑目前各自保存数据，不自动同步；安卓版首版暂不含月历与导入导出。已在Android15模拟器验证，更多说明见 [安卓版使用指南](android/README.md)。
+
 ## 从记录，到完成
 
-以下均为软件实机截图，使用独立的示例事项；下载的程序不会附带这些数据。
+以下为Windows版软件实机截图，使用独立的示例事项；下载的程序不会附带这些数据。
 
 ### 01　没做完的事，明天仍然看得见
 
@@ -161,7 +171,7 @@ JSON 导入会**追加**事项，重复导入可能产生重复记录；JSON 备
 <details>
 <summary><b>支持云同步、多设备同步或手机端吗？</b></summary>
 
-当前版本以 Windows 本地使用为主，暂不提供这些功能。可以通过 JSON 导出、导入手动迁移事项，背景图片需要另行备份。
+现已提供Android版，下载及使用方法见上方Android介绍。两个平台目前各自保存在本机，暂不支持云同步和自动同步。Windows版支持JSON导入导出，安卓版首版暂不支持数据迁移。
 
 </details>
 
