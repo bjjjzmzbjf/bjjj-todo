@@ -1,0 +1,61 @@
+name: Android APK
+on:
+  push:
+    branches: [android-widget]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - run: gradle -p android :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Test native widget and persistence
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install android/app/build/outputs/apk/debug/app-debug.apk
+            adb install android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+            adb shell appwidget grantbind --package com.bjjj.todo --user 0
+            adb shell am instrument -w com.bjjj.todo.test/com.bjjj.todo.WidgetTests | tee instrumentation.txt
+            grep -q 'OK (1 test)' instrumentation.txt
+      - name: Sign APK with project key
+        if: github.ref == 'refs/heads/android-widget' || github.ref == 'refs/heads/main'
+        env:
+          KEY_BASE64: ${{ secrets.BJJJ_ANDROID_KEYSTORE }}
+          BJJJ_PASSWORD: ${{ secrets.BJJJ_ANDROID_STORE_PASSWORD }}
+        run: |
+          printf '%s' "$KEY_BASE64" | base64 --decode > "$RUNNER_TEMP/bjjj.p12"
+          export BJJJ_KEYSTORE="$RUNNER_TEMP/bjjj.p12"
+          gradle -p android :app:assembleRelease
+          mkdir -p artifacts
+          cp android/app/build/outputs/apk/release/app-release.apk artifacts/bjjj.todo.android.apk
+          cd artifacts && sha256sum bjjj.todo.android.apk > ANDROID-SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bjjj-todo-android
+          path: artifacts/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-test-results
+          path: instrumentation.txt

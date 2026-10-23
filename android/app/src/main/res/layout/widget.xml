@@ -1,0 +1,16 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+ <ImageView android:id="@+id/backdrop" android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/widget_bg" android:scaleType="fitXY" android:contentDescription="背景"/>
+ <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical">
+   <TextView android:id="@+id/brand" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:gravity="center_vertical" android:text="bjjj todo" android:textStyle="bold" android:textSize="22sp" android:textColor="#bee7cf"/>
+   <TextView android:id="@+id/add" android:layout_width="48dp" android:layout_height="48dp" android:gravity="center" android:text="＋" android:textColor="#bee7cf" android:textSize="28sp" android:contentDescription="新建待办"/>
+  </LinearLayout>
+  <TextClock android:layout_width="match_parent" android:layout_height="32dp" android:format12Hour="M月d日 EEEE" android:format24Hour="M月d日 EEEE" android:textColor="#a9bdbb" android:textSize="13sp"/>
+  <ListView android:id="@+id/tasks" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:divider="@android:color/transparent" android:dividerHeight="6dp"/>
+  <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical">
+   <TextView android:id="@+id/prev" android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:text="‹" android:textSize="26sp" android:textColor="#bee7cf" android:contentDescription="上一页"/>
+   <TextView android:id="@+id/footer" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:gravity="center" android:text="未完成，每天都在" android:textSize="11sp" android:textColor="#9db8b0"/>
+   <TextView android:id="@+id/next" android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:text="›" android:textSize="26sp" android:textColor="#bee7cf" android:contentDescription="下一页"/>
+  </LinearLayout>
+ </LinearLayout>
+</FrameLayout>
