@@ -1,12 +1,12 @@
 {
   "name": "bjjj-todo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "不急及及代办 · bjjj todo：持续显示未完成事项的桌面待办",
   "author": "bjjj todo",
   "main": "desktop.cjs",
   "scripts": {
     "start": "electron .",
-    "test": "node --test core.test.js migrate-data.test.cjs month-calendar.test.cjs",
+    "test": "node --test core.test.js migrate-data.test.cjs month-calendar.test.cjs sync-core.test.cjs",
     "build": "electron-builder --win portable --x64",
     "prebuild": "node scripts/ensure-electron.cjs"
   },
@@ -40,7 +40,11 @@
       "overview.html",
       "overview.js",
       "month-calendar.js",
-      "LICENSE"
+      "LICENSE",
+      "cloud-client.cjs",
+      "sync-core.cjs",
+      "cloud-config.json",
+      "cloud-ui.js"
     ],
     "win": {
       "target": "portable",
@@ -55,6 +59,7 @@
     "executableName": "bjjj todo"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.118.0",
     "air-datepicker": "^3.6.0",
     "lunar-javascript": "^1.7.7"
   },

@@ -16,3 +16,4 @@ backups/
 exec-*.png
 qa-*.cjs
 *-preview.png
+cloud/supabase/.temp/

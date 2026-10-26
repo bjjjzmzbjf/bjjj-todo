@@ -11,5 +11,5 @@ public final class Store {
  public static synchronized void delete(Context c,String id)throws Exception{JSONObject r=read(c);JSONArray a=r.getJSONArray("tasks");for(int i=a.length()-1;i>=0;i--)if(a.getJSONObject(i).optString("id").equals(id))a.remove(i);write(c,r);}
  public static String category(JSONObject t){return switch(t.optString("category")){case "research"->"科研";case "work"->"工作";case "study"->"学习";case "life"->"生活";default->"其他";};}
  public static String priority(JSONObject t){return switch(t.optString("priority")){case "high"->"重要";case "low"->"低优先级";default->"普通";};}
- public static void changed(Context c){TodoWidget.updateAll(c);Reminder.schedule(c);}
+ public static void changed(Context c){TodoWidget.updateAll(c);Reminder.schedule(c);CloudSync.schedule(c);}
 }

@@ -1,10 +1,10 @@
 ﻿Unicode true
 Name "不急及及代办 · bjjj todo"
-VIProductVersion "1.0.0.0"
+VIProductVersion "1.1.0.0"
 VIAddVersionKey "ProductName" "bjjj todo"
 VIAddVersionKey "FileDescription" "不急及及代办"
-VIAddVersionKey "ProductVersion" "1.0.0"
-VIAddVersionKey "FileVersion" "1.0.0.0"
+VIAddVersionKey "ProductVersion" "1.1.0"
+VIAddVersionKey "FileVersion" "1.1.0.0"
 OutFile "${__FILEDIR__}\release\bjjj todo.exe"
 Icon "${__FILEDIR__}\icon.ico"
 RequestExecutionLevel user

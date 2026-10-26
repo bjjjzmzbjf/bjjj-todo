@@ -2,7 +2,7 @@ const {app,BrowserWindow,ipcMain,Tray,Menu,nativeImage,Notification,dialog,power
 const fs=require('node:fs'),path=require('node:path');
 const {validateTask,pendingAlerts,widgetTasks}=require('./core');
 const {migrateLegacyData}=require('./migrate-data.cjs');
-let win,widget,overview,tray,quitting=false,store,file,boundsTimer;
+let win,widget,overview,tray,quitting=false,store,file,boundsTimer,cloudClient;
 app.setName('bjjj todo');
 if(process.env.BJJJ_TODO_DATA_DIR)app.setPath('userData',process.env.BJJJ_TODO_DATA_DIR);
 const webPreferences={preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false,sandbox:true};
@@ -27,7 +27,8 @@ app.whenReady().then(()=>{
  tray=new Tray(path.join(__dirname,'icon.ico'));tray.setToolTip('不急及及代办 · bjjj todo');
  tray.setContextMenu(Menu.buildFromTemplate([{label:'打开待办',click:show},{label:'月历总览',click:openOverview},{label:'显示桌面浮窗',click:()=>{store.settings.widgetEnabled=true;openWidget();persist();}},{label:'退出软件',click:()=>{quitting=true;app.quit();}}]));tray.on('double-click',show);
  ipcMain.handle('bjjj-todo',async(e,name,data)=>{try{
-  if(name==='get')return {ok:true,data:{...store,background:background(),widgetLists:widgetTasks(store.tasks)}};
+  if(name.startsWith('cloud-')){if(!cloudClient)throw Error('同步尚未初始化');if(name==='cloud-login')return {ok:true,data:await cloudClient.login(data.email,data.password)};if(name==='cloud-signup')return {ok:true,data:await cloudClient.signup(data.email,data.password)};if(name==='cloud-logout')return {ok:true,data:await cloudClient.logout()};if(name==='cloud-sync')return {ok:true,data:await cloudClient.sync()};throw Error('同步操作无效');}
+  if(name==='get')return {ok:true,data:{...store,background:background(),widgetLists:widgetTasks(store.tasks),cloudStatus:cloudClient?.info()||{}}};
   if(name==='save'){const prev=store.tasks.find(t=>t.id===data.id);if(data.id&&!prev)throw Error('事项不存在');const t=validateTask(data,prev);if(prev)store.tasks[store.tasks.indexOf(prev)]=t;else store.tasks.push(t);persist();check();}
   else if(name==='toggle'){const t=store.tasks.find(t=>t.id===data);if(t){t.done=!t.done;t.completed=t.done?new Date().toISOString():null;persist();}}
   else if(name==='delete'){store.tasks=store.tasks.filter(t=>t.id!==data);persist();}
@@ -64,6 +65,7 @@ app.whenReady().then(()=>{
   else throw Error('不支持的操作');
   return {ok:true};
  }catch(err){return {ok:false,error:err.message};}});
+ cloudClient=new (require('./cloud-client.cjs').CloudClient)({directory:app.getPath('userData'),read:()=>structuredClone(store),write:value=>{store=value;persist(false);},changed:()=>{for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');check();}});
  if(store.settings.widgetEnabled)openWidget();
  setInterval(check,15000);powerMonitor.on('resume',check);setTimeout(check,2000);
 });
@@ -84,7 +86,7 @@ function openOverview(){
  overview.on('close',e=>{if(!quitting){e.preventDefault();overview.hide();}});
 }
 function show(){if(win){win.show();if(win.isMinimized())win.restore();win.focus();}}
-function persist(){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');}
+function persist(sync=true){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');if(sync)cloudClient?.kick();}
 function background(){try{return store.settings.hasBackground?'data:image/jpeg;base64,'+fs.readFileSync(path.join(app.getPath('userData'),'background.jpg')).toString('base64'):null;}catch{return null;}}
 function notify(title,body){if(Notification.isSupported()){const n=new Notification({title,body,timeoutType:'never'});n.on('click',show);n.on('failed',()=>show());n.show();}else show();}
 function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){a.task.fired.push(a.offset);a.task.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及代办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
