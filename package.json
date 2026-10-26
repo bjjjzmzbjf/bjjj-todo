@@ -8,7 +8,8 @@
     "start": "electron .",
     "test": "node --test core.test.js migrate-data.test.cjs month-calendar.test.cjs sync-core.test.cjs",
     "build": "electron-builder --win portable --x64",
-    "prebuild": "node scripts/ensure-electron.cjs"
+    "prebuild": "node scripts/ensure-electron.cjs",
+    "test:ui-sync": "node sync-ui-smoke.cjs"
   },
   "devDependencies": {
     "electron": "45.0.0",
