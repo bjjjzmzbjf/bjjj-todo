@@ -5,7 +5,7 @@ const priorities={high:'重要',normal:'普通',low:'低优先级'};
 const categories={research:'科研',work:'工作',study:'学习',life:'生活',other:'其他'};
 const priorityOf=t=>Object.hasOwn(priorities,t.priority)?t.priority:'normal';
 const categoryOf=t=>Object.hasOwn(categories,t.category)?t.category:'other';
-const duration=m=>m===0?'到时':m%1440===0?`提前 ${m/1440} 天`:m%60===0?`提前 ${m/60} 小时`:`提前 ${m} 分钟`;
+const duration=m=>{const seconds=Math.round(m*60);return seconds===0?'到时':seconds%86400===0?`提前 ${seconds/86400} 天`:seconds%3600===0?`提前 ${seconds/3600} 小时`:seconds%60===0?`提前 ${seconds/60} 分钟`:`提前 ${seconds} 秒`;};
 function toast(s){$('toast').textContent=s;$('toast').classList.add('visible');setTimeout(()=>$('toast').classList.remove('visible'),3500);}
 async function call(n,d){const r=await window.bjjjTodo.call(n,d);if(!r.ok){toast(r.error);throw Error(r.error);}return r.data;}
 async function refresh(){try{state=await call('get');render();}catch(e){console.error(e);}}
