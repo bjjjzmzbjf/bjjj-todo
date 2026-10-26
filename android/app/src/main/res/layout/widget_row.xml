@@ -1,7 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="10dp" android:paddingBottom="10dp" android:gravity="center_vertical">
+<LinearLayout android:id="@+id/task_card" android:background="@drawable/task_normal" android:paddingStart="6dp" android:paddingEnd="10dp" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="10dp" android:paddingBottom="10dp" android:gravity="center_vertical">
  <ImageView android:id="@+id/check" android:layout_width="44dp" android:layout_height="48dp" android:padding="10dp" android:src="@drawable/check_empty" android:contentDescription="完成事项"/>
  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
-  <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#ecf4ef" android:textSize="16sp" android:maxLines="3" android:ellipsize="end"/>
+  <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#293940" android:textSize="16sp" android:maxLines="3" android:ellipsize="end"/>
   <TextView android:id="@+id/meta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textColor="#a5bbb9" android:textSize="11sp"/>
  </LinearLayout>
 </LinearLayout>
