@@ -4,7 +4,7 @@
 
 <p align="center"><b>未完成的事，留在眼前。重要的节点，提前记住。</b></p>
 <p align="center">Windows 免安装 · Android 桌面组件 · 本地保存 · MIT 开源</p>
-<p align="center"><a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest"><b>↓ 下载 Windows 版</b></a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/v1.1.0"><b>↓ 下载 Android 版</b></a>　·　<a href="#从记录到完成">功能与截图</a>　·　<a href="#三步开始使用">开始使用</a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/issues">反馈与建议</a></p>
+<p align="center"><a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest"><b>↓ 下载 Windows 版</b></a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/v1.1.1"><b>↓ 下载 Android 版</b></a>　·　<a href="#从记录到完成">功能与截图</a>　·　<a href="#三步开始使用">开始使用</a>　·　<a href="https://github.com/bjjjzmzbjf/bjjj-todo/issues">反馈与建议</a></p>
 
 论文还有几张图要改，明天的会议需要准备，周末也有自己的安排。事情写下来了，却可能随着翻页、切换日期，又被忘在一边。
 
@@ -21,9 +21,9 @@
 
 ## Android：把待办铺到一页手机桌面
 
-现已提供 **Android 1.1.0**（Android 8.0及以上）。原生桌面小组件支持“今日待办＋全部未完成”、滚动与分页、直接勾选完成，以及背景不透明度调整。App和组件的事项按重要性使用浅红、浅黄、浅蓝背景。App内可新建、编辑、分类，使用“数值＋天/小时/分钟/秒”添加多个提前提醒。
+现已提供 **Android 1.1.1**（Android 8.0及以上）。原生桌面小组件支持“今日待办＋全部未完成”、滚动与分页、直接勾选完成，以及背景不透明度调整。App和组件的事项按重要性使用浅红、浅黄、浅蓝背景。App内可新建、编辑、分类，使用“数值＋天/小时/分钟/秒”添加多个提前提醒。
 
-1. 从 [安卓版下载页](https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/v1.1.0) 下载 `bjjj.todo.android.apk` 并安装。
+1. 从 [安卓版下载页](https://github.com/bjjjzmzbjf/bjjj-todo/releases/tag/v1.1.1) 下载 `bjjj.todo.android.apk` 并安装。
 2. 打开App添加事项，点击“添加桌面小组件”；也可以长按桌面空白处 → 小组件 → 不急及及代办。
 3. 把组件拖到一张空白桌面，长按组件并拉伸边框。实际大小及边距由手机桌面决定。
 
@@ -135,11 +135,11 @@ JSON 导入会**追加**事项，重复导入可能产生重复记录；JSON 备
 
 ## 可选：电脑与手机云同步
 
-升级到1.1.0，在两端设置中登录同一个同步账号，即可合并并同步事项。支持离线修改后补同步，冲突时保留修改副本。背景和窗口等设备设置分别保留。当前内置服务用于个人测试，完整注册说明、后台同步时机与自建方式见 [云同步指南](CLOUD_SYNC.md)。
+升级到1.1.1，在两端设置中登录同一个同步账号，即可合并并同步事项。支持离线修改后补同步，冲突时保留修改副本。背景和窗口等设备设置分别保留。当前内置服务用于个人测试，完整注册说明、后台同步时机与自建方式见 [云同步指南](CLOUD_SYNC.md)。
 
 ## 三步开始使用
 
-**当前版本：v1.1.0。** 已在 Windows 11 x64 环境验证。
+**当前版本：v1.1.1。** 修复安卓登录后后台同步权限导致的启动闪退；电脑端同步时保持列表与滚动位置，未变化的列表不再重新生成。 已在 Windows 11 x64 环境验证。
 
 1. **下载程序**：打开 [Releases 下载页](https://github.com/bjjjzmzbjf/bjjj-todo/releases/latest)，下载 Assets 下的 **`bjjj.todo.exe`**。这是免安装单文件程序；GitHub 自动生成的 `Source code` 压缩包是源码。
 2. **放好再运行**：把程序放在固定目录，双击打开。首次运行会自动创建“不急及及代办”桌面快捷方式；也可以在设置中补建。

@@ -4,7 +4,7 @@ android {
  buildFeatures { buildConfig true }
  namespace 'com.bjjj.todo'
  compileSdk 36
- defaultConfig { buildConfigField 'String', 'CLOUD_URL', groovy.json.JsonOutput.toJson(cloudConfig.url); buildConfigField 'String', 'CLOUD_KEY', groovy.json.JsonOutput.toJson(cloudConfig.publishableKey); applicationId 'com.bjjj.todo'; minSdk 26; targetSdk 36; versionCode 4; versionName '1.1.0'; testInstrumentationRunner 'com.bjjj.todo.WidgetTests' }
+ defaultConfig { buildConfigField 'String', 'CLOUD_URL', groovy.json.JsonOutput.toJson(cloudConfig.url); buildConfigField 'String', 'CLOUD_KEY', groovy.json.JsonOutput.toJson(cloudConfig.publishableKey); applicationId 'com.bjjj.todo'; minSdk 26; targetSdk 36; versionCode 5; versionName '1.1.1'; testInstrumentationRunner 'com.bjjj.todo.WidgetTests' }
  signingConfigs { release { if (System.getenv('BJJJ_KEYSTORE')) { storeFile file(System.getenv('BJJJ_KEYSTORE')); storePassword System.getenv('BJJJ_PASSWORD'); keyAlias 'bjjj'; keyPassword System.getenv('BJJJ_PASSWORD') } } }
  buildTypes { release { signingConfig signingConfigs.release } }
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }

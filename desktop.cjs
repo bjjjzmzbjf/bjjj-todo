@@ -65,7 +65,7 @@ app.whenReady().then(()=>{
   else throw Error('不支持的操作');
   return {ok:true};
  }catch(err){return {ok:false,error:err.message};}});
- cloudClient=new (require('./cloud-client.cjs').CloudClient)({directory:app.getPath('userData'),read:()=>structuredClone(store),write:value=>{store=value;persist(false);},changed:()=>{for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');check();}});
+ cloudClient=new (require('./cloud-client.cjs').CloudClient)({directory:app.getPath('userData'),read:()=>structuredClone(store),write:value=>{store=value;persist(false,false);},changed:()=>{for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');check();}});
  if(store.settings.widgetEnabled)openWidget();
  setInterval(check,15000);powerMonitor.on('resume',check);setTimeout(check,2000);
 });
@@ -86,7 +86,7 @@ function openOverview(){
  overview.on('close',e=>{if(!quitting){e.preventDefault();overview.hide();}});
 }
 function show(){if(win){win.show();if(win.isMinimized())win.restore();win.focus();}}
-function persist(sync=true){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');if(sync)cloudClient?.kick();}
+function persist(sync=true,broadcast=true){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);if(broadcast)for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');if(sync)cloudClient?.kick();}
 function background(){try{return store.settings.hasBackground?'data:image/jpeg;base64,'+fs.readFileSync(path.join(app.getPath('userData'),'background.jpg')).toString('base64'):null;}catch{return null;}}
 function notify(title,body){if(Notification.isSupported()){const n=new Notification({title,body,timeoutType:'never'});n.on('click',show);n.on('failed',()=>show());n.show();}else show();}
 function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){a.task.fired.push(a.offset);a.task.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及代办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
