@@ -3,7 +3,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
 const output=path.resolve(__dirname,'../界面验证与预览');
 const asset=name=>fs.readFileSync(path.join(__dirname,'android/app/src/main/assets',name),'utf8');
 const source=name=>fs.readFileSync(path.join(__dirname,name),'utf8');
-const html=asset('index.html').replace('<!--CLOUD_UI-->','<style>'+source('cloud-ui.css')+'</style><script>'+source('cloud-ui.js')+'</script>').replace('<!--CALENDAR_UI-->','<style>'+asset('mobile-calendar.css')+'</style><script>'+source('month-calendar.js')+'\n'+asset('mobile-calendar.js')+'</script>');
+const html=asset('index.html').replace('</head>','<style>'+source('cloud-ui.css')+asset('mobile-calendar.css')+'</style></head>').replace('<!--CLOUD_UI-->','<script>'+source('cloud-ui.js')+'</script>').replace('<!--CALENDAR_UI-->','<script>'+source('month-calendar.js')+'\n'+asset('mobile-calendar.js')+'</script>');
 (async()=>{
  fs.mkdirSync(output,{recursive:true});const browser=await chromium.launch({channel:process.env.BJJJ_TEST_BROWSER||'msedge'});
  try{
