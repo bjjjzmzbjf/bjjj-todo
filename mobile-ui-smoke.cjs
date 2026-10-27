@@ -1,0 +1,37 @@
+// Browser fixture exercises the HTML shipped in the APK; native bridge is tested separately in Android CI.
+const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const output=path.resolve(__dirname,'../界面验证与预览');
+const asset=name=>fs.readFileSync(path.join(__dirname,'android/app/src/main/assets',name),'utf8');
+const source=name=>fs.readFileSync(path.join(__dirname,name),'utf8');
+const html=asset('index.html').replace('<!--CLOUD_UI-->','<script>'+source('cloud-ui.js')+'</script>').replace('<!--CALENDAR_UI-->','<style>'+asset('mobile-calendar.css')+'</style><script>'+source('month-calendar.js')+'\n'+asset('mobile-calendar.js')+'</script>');
+(async()=>{
+ fs.mkdirSync(output,{recursive:true});const browser=await chromium.launch({channel:process.env.BJJJ_TEST_BROWSER||'msedge'});
+ try{
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1,timezoneId:'Asia/Shanghai',isMobile:true,hasTouch:true});
+  await context.addInitScript(()=>{
+   const task=(id,title,day,priority,done=false)=>({id,title,due:day?'2026-10-'+day+'T17:00:00+08:00':'',priority,category:'research',offsets:[30],notes:'',done,created:'2026-10-01T09:00:00Z'});
+   window.fixture={version:1,tasks:[task('high','核对论文图表','27','high'),task('low','整理参考文献','27','low'),task('normal','准备组会汇报','28','normal'),task('blue','散步与阅读','29','low'),task('overdue','还没完成的计划','25','normal'),task('done','已完成事项','27','high',true),task('undated','记录一个新的想法','','low')],settings:{opacity:85},notifications:true,exact:true,cloudStatus:{pending:6}};
+   window.testCloudCalls=[];window.Native={call(action,text){const p=JSON.parse(text),s=window.fixture;if(action==='save'){const i=s.tasks.findIndex(t=>t.id===p.id);const item={...p,id:p.id||'new',done:false};if(i<0)s.tasks.push(item);else s.tasks[i]=item;}if(action==='done')s.tasks.find(t=>t.id===p.id).done=p.done;if(action==='get')return JSON.stringify({ok:true,data:s});return JSON.stringify({ok:true,data:{}});},cloud(action,text,id){window.testCloudCalls.push(action);const s=window.fixture;setTimeout(()=>{if(action==='login'&&JSON.parse(text).password==='bad-pass'){window.cloudResolve(id,{ok:false,error:'Invalid login credentials'});return;}if(action==='login')s.cloudStatus={email:JSON.parse(text).email,signedIn:true,pending:0,lastSync:new Date().toISOString()};if(action==='logout')s.cloudStatus={};window.cloudResolve(id,{ok:true,data:action==='signup'?{message:'请在邮箱中确认注册'}:s.cloudStatus});},30);}};
+  });
+  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.clock.install({time:new Date('2026-10-27T09:00:00+08:00')});
+  await page.goto('data:text/html;charset=utf-8,'+encodeURIComponent(html));await page.waitForSelector('#mobile-week .calendar-date');
+  assert.equal(await page.locator('#mobile-week .calendar-date').count(),7);assert.ok(await page.locator('#mobile-week [data-calendar-date="2026-10-27"]').evaluate(e=>e.classList.contains('priority-high')));
+  await page.screenshot({path:path.join(output,'手机周视图.png'),fullPage:false});
+  await page.locator('#mobile-month-tab').click();assert.equal(await page.locator('#mobile-month-days .calendar-date').count(),35);assert.equal(await page.locator('#mobile-month-days [data-calendar-date="2026-10-27"] .calendar-day-count').textContent(),'2项');
+  await page.locator('#mobile-month-days [data-calendar-date="2026-10-28"]').click();assert.match(await page.locator('#day-title').textContent(),/10月28日/);assert.equal(await page.locator('#today .task').count(),1);
+  await page.evaluate(()=>{window.selectedNode=document.querySelector('#mobile-month-days .selected');window.openNode=document.querySelector('#open .task');refresh();refresh();});assert.equal(await page.evaluate(()=>window.selectedNode===document.querySelector('#mobile-month-days .selected')&&window.openNode===document.querySelector('#open .task')),true);
+  await page.screenshot({path:path.join(output,'手机月历总览.png')});
+  await page.locator('#mobile-day-add').click();assert.equal(await page.locator('#due').inputValue(),'2026-10-28T17:00');await page.locator('#title').fill('从月历新增事项');await page.locator('#form button.primary').click();assert.equal(await page.locator('#today .task').count(),2);
+  await page.locator('#mobile-calendar-today').click();await page.locator('#today [data-done="high"]').click();assert.ok(await page.locator('#mobile-month-days [data-calendar-date="2026-10-27"]').evaluate(e=>e.classList.contains('priority-low')));assert.match(await page.locator('#open').textContent(),/还没完成的计划/);assert.match(await page.locator('#open').textContent(),/记录一个新的想法/);
+  await page.evaluate(()=>{for(let n=0;n<32;n++)document.getElementById('mobile-calendar-prev').click();});assert.match(await page.locator('#mobile-calendar-title').textContent(),/2024年2月/);assert.equal(await page.locator('[data-calendar-date="2024-02-29"]').count(),1);
+  await page.locator('#mobile-calendar-today').click();await page.locator('#prefs').click();await page.locator('#cloud-email').fill('demo@example.com');await page.locator('#cloud-password').fill('example-pass');await page.locator('#cloud-password-toggle').click();assert.equal(await page.locator('#cloud-password').getAttribute('type'),'text');await page.locator('#cloud-password-toggle').click();
+  await page.screenshot({path:path.join(output,'手机账号登录.png')});
+  await page.locator('#cloud-password').fill('bad-pass');await page.locator('#cloud-login').click();await page.waitForFunction(()=>document.getElementById('cloud-message').textContent.includes('邮箱或密码不正确'));
+  await page.locator('#cloud-password').fill('example-pass');await page.locator('#cloud-password').press('Enter');await page.locator('#cloud-session').waitFor({state:'visible'});assert.equal(await page.locator('#cloud-account').textContent(),'demo@example.com');assert.equal(await page.locator('#cloud-password').inputValue(),'');await page.locator('#cloud-sync').click();await page.waitForFunction(()=>window.testCloudCalls.includes('sync'));await page.locator('#cloud-logout').click();await page.locator('#cloud-auth').waitFor({state:'visible'});
+  await page.locator('#cloud-tab-signup').click();assert.equal(await page.locator('#cloud-password').getAttribute('autocomplete'),'new-password');await page.locator('#cloud-password').fill('example-pass');await page.locator('#cloud-signup').click();await page.waitForFunction(()=>document.getElementById('cloud-message').textContent.includes('邮箱中确认'));
+  await page.locator('#cloud-tab-login').click();
+  for(const width of [320,390,480]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);assert.equal(await page.locator('#settings').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);}
+  await page.locator('#close-settings').click();await page.setViewportSize({width:320,height:720});assert.equal(await page.locator('#mobile-calendar').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+  assert.deepEqual(errors,[]);console.log('PASS mobile week/month, priority/counts, date selection, create/complete, overdue/undated retention, leap year, stable nodes, auth validation/login/logout/signup and 320–480px layout.');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,6 +1,6 @@
 {
   "name": "bjjj-todo",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "不急及及代办 · bjjj todo：持续显示未完成事项的桌面待办",
   "author": "bjjj todo",
   "main": "desktop.cjs",
@@ -9,7 +9,8 @@
     "test": "node --test core.test.js migrate-data.test.cjs month-calendar.test.cjs sync-core.test.cjs",
     "build": "electron-builder --win portable --x64",
     "prebuild": "node scripts/ensure-electron.cjs",
-    "test:ui-sync": "node sync-ui-smoke.cjs"
+    "test:ui-sync": "node sync-ui-smoke.cjs",
+    "test:ui-mobile": "node mobile-ui-smoke.cjs"
   },
   "devDependencies": {
     "electron": "45.0.0",
