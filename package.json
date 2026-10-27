@@ -10,7 +10,8 @@
     "build": "electron-builder --win portable --x64",
     "prebuild": "node scripts/ensure-electron.cjs",
     "test:ui-sync": "node sync-ui-smoke.cjs",
-    "test:ui-mobile": "node mobile-ui-smoke.cjs"
+    "test:ui-mobile": "node mobile-ui-smoke.cjs",
+    "test:ui-account": "node account-ui-smoke.cjs"
   },
   "devDependencies": {
     "electron": "45.0.0",
