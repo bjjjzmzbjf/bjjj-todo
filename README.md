@@ -29,6 +29,8 @@
 
 手机和电脑可选登录同一账号同步事项；安卓版现已支持周日期切换和月历总览，暂不提供导入导出。已在Android15模拟器验证，更多说明见 [安卓版使用指南](android/README.md)。
 
+<p align="center"><img src="assets/手机周视图.png" width="29%" alt="手机周视图：日期按最高重要性着色"><img src="assets/手机月历总览.png" width="29%" alt="手机月历总览：事项数量与日期切换"><img src="assets/电脑账号登录.png" width="37%" alt="两端共用的新版账号登录卡片"></p>
+
 ## 从记录，到完成
 
 以下为Windows版软件实机截图，使用独立的示例事项；下载的程序不会附带这些数据。
