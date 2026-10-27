@@ -10,5 +10,5 @@ android {
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 
-tasks.register('syncCloudUi', Copy) { from(rootProject.file('../cloud-ui.js')); from(rootProject.file('../month-calendar.js')); into('src/main/assets') }
+tasks.register('syncCloudUi', Copy) { from(rootProject.file('../cloud-ui.js')); from(rootProject.file('../cloud-ui.css')); from(rootProject.file('../month-calendar.js')); into('src/main/assets') }
 tasks.named('preBuild').configure { dependsOn('syncCloudUi') }

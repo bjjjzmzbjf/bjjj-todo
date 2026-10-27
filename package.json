@@ -46,7 +46,8 @@
       "cloud-client.cjs",
       "sync-core.cjs",
       "cloud-config.json",
-      "cloud-ui.js"
+      "cloud-ui.js",
+      "cloud-ui.css"
     ],
     "win": {
       "target": "portable",
