@@ -1,4 +1,4 @@
-# 不急及及代办 · bjjj todo 1.0.0
+# 不急及及待办 · bjjj todo 1.0.0
 
 首个公开发布版本，适用于 Windows x64，已在 Windows 11 环境验证。
 

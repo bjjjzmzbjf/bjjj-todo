@@ -1,7 +1,7 @@
 {
   "name": "bjjj-todo",
   "version": "1.2.0",
-  "description": "不急及及代办 · bjjj todo：持续显示未完成事项的桌面待办",
+  "description": "不急及及待办 · bjjj todo：持续显示未完成事项的桌面待办",
   "author": "bjjj todo",
   "main": "desktop.cjs",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "build": {
     "appId": "local.bjjj.todo",
-    "productName": "不急及及代办 - bjjj todo",
+    "productName": "不急及及待办 - bjjj todo",
     "directories": {
       "output": "release"
     },

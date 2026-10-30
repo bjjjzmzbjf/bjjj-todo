@@ -19,12 +19,12 @@ app.whenReady().then(()=>{
   if(!process.env.BJJJ_TODO_DATA_DIR)migrated=migrateLegacyData(path.join(app.getPath('appData'),'bujjj todo'),app.getPath('userData'));
   if(fs.existsSync(file)){const d=JSON.parse(fs.readFileSync(file,'utf8'));if(!Array.isArray(d.tasks)||d.version!==1)throw Error('数据格式不正确');store={...d,settings:{...store.settings,...d.settings}};}
  }catch(e){dialog.showErrorBox('无法读取待办数据','为避免覆盖已有数据，软件将退出。请保留 tasks.json 与 .bak 文件。\n'+e.message);app.quit();return;}
- if(process.platform==='win32'&&app.isPackaged&&!store.settings.desktopShortcutCreated){try{createDesktopShortcut();}catch(e){console.error('Desktop shortcut:',e.message);}}
+ if(process.platform==='win32'&&app.isPackaged&&(!store.settings.desktopShortcutCreated||fs.existsSync(legacyDesktopShortcut()))){try{createDesktopShortcut();}catch(e){console.error('Desktop shortcut:',e.message);}}
  if(store.settings.autostart&&app.isPackaged){if(migrated)app.setLoginItemSettings({name:'bujjj todo',openAtLogin:false});app.setLoginItemSettings({name:'bjjj todo',openAtLogin:true,path:process.env.PORTABLE_EXECUTABLE_FILE||app.getPath('exe')});}
  win=new BrowserWindow({width:500,height:800,minWidth:400,minHeight:560,frame:false,icon:path.join(__dirname,'icon.ico'),backgroundColor:'#101923',show:false,webPreferences});secure(win);
  win.setAlwaysOnTop(!!store.settings.pinned);win.loadFile('index.html');win.once('ready-to-show',()=>win.show());
  win.on('close',e=>{if(!quitting){e.preventDefault();win.hide();}});
- tray=new Tray(path.join(__dirname,'icon.ico'));tray.setToolTip('不急及及代办 · bjjj todo');
+ tray=new Tray(path.join(__dirname,'icon.ico'));tray.setToolTip('不急及及待办 · bjjj todo');
  tray.setContextMenu(Menu.buildFromTemplate([{label:'打开待办',click:show},{label:'月历总览',click:openOverview},{label:'显示桌面浮窗',click:()=>{store.settings.widgetEnabled=true;openWidget();persist();}},{label:'退出软件',click:()=>{quitting=true;app.quit();}}]));tray.on('double-click',show);
  ipcMain.handle('bjjj-todo',async(e,name,data)=>{try{
   if(name.startsWith('cloud-')){if(!cloudClient)throw Error('同步尚未初始化');if(name==='cloud-login')return {ok:true,data:await cloudClient.login(data.email,data.password)};if(name==='cloud-signup')return {ok:true,data:await cloudClient.signup(data.email,data.password)};if(name==='cloud-logout')return {ok:true,data:await cloudClient.logout()};if(name==='cloud-sync')return {ok:true,data:await cloudClient.sync()};throw Error('同步操作无效');}
@@ -59,8 +59,8 @@ app.whenReady().then(()=>{
   else if(name==='hide')win.hide();
   else if(name==='quit'){quitting=true;app.quit();}
   else if(name==='desktop-shortcut')createDesktopShortcut();
-  else if(name==='test')notify('提醒测试','这是不急及及代办的测试通知。');
-  else if(name==='export'){const r=await dialog.showSaveDialog(win,{defaultPath:'不急及及代办备份.json',filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled)fs.writeFileSync(r.filePath,JSON.stringify(store,null,2));}
+  else if(name==='test')notify('提醒测试','这是不急及及待办的测试通知。');
+  else if(name==='export'){const r=await dialog.showSaveDialog(win,{defaultPath:'不急及及待办备份.json',filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled)fs.writeFileSync(r.filePath,JSON.stringify(store,null,2));}
   else if(name==='import'){const r=await dialog.showOpenDialog(win,{filters:[{name:'JSON',extensions:['json']}],properties:['openFile']});if(!r.canceled){const d=JSON.parse(fs.readFileSync(r.filePaths[0],'utf8'));if(!Array.isArray(d.tasks)||d.tasks.length>10000)throw Error('备份格式不正确');const tasks=d.tasks.map(t=>({...validateTask(t),done:!!t.done,completed:t.completed||null}));store.tasks.push(...tasks);persist();check();}}
   else throw Error('不支持的操作');
   return {ok:true};
@@ -89,9 +89,11 @@ function show(){if(win){win.show();if(win.isMinimized())win.restore();win.focus(
 function persist(sync=true,broadcast=true){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);if(broadcast)for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');if(sync)cloudClient?.kick();}
 function background(){try{return store.settings.hasBackground?'data:image/jpeg;base64,'+fs.readFileSync(path.join(app.getPath('userData'),'background.jpg')).toString('base64'):null;}catch{return null;}}
 function notify(title,body){if(Notification.isSupported()){const n=new Notification({title,body,timeoutType:'never'});n.on('click',show);n.on('failed',()=>show());n.show();}else show();}
-function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){a.task.fired.push(a.offset);a.task.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及代办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
+function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){a.task.fired.push(a.offset);a.task.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及待办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
 app.on('before-quit',()=>{clearTimeout(boundsTimer);if(store&&widget&&!widget.isDestroyed()){store.settings.widgetBounds=widget.getBounds();persist();}quitting=true;});app.on('window-all-closed',()=>{});
 
+// Recognize the earlier misspelled shortcut only for an in-place rename.
+function legacyDesktopShortcut(){return path.join(process.env.BJJJ_TODO_DATA_DIR?path.join(app.getPath('userData'),'Desktop'):app.getPath('desktop'),'不急及及\u4ee3办.lnk');}
 function createDesktopShortcut(){
  if(process.platform!=='win32'||!app.isPackaged)throw Error('请在 Windows 打包版中创建快捷方式');
  const target=process.env.PORTABLE_EXECUTABLE_FILE||app.getPath('exe');
@@ -99,7 +101,8 @@ function createDesktopShortcut(){
  const desktop=process.env.BJJJ_TODO_DATA_DIR?path.join(app.getPath('userData'),'Desktop'):app.getPath('desktop');
  fs.mkdirSync(desktop,{recursive:true});fs.mkdirSync(app.getPath('userData'),{recursive:true});
  const icon=path.join(app.getPath('userData'),'shortcut.ico');fs.copyFileSync(path.join(__dirname,'icon.ico'),icon);
- const shortcut=path.join(desktop,'不急及及代办.lnk');
- if(!shell.writeShortcutLink(shortcut,'create',{target,cwd:path.dirname(target),description:'不急及及代办 · bjjj todo',icon,iconIndex:0,appUserModelId:'local.bjjj.todo'}))throw Error('无法创建快捷方式，请检查桌面目录的写入权限');
+ const shortcut=path.join(desktop,'不急及及待办.lnk');
+ if(!shell.writeShortcutLink(shortcut,'create',{target,cwd:path.dirname(target),description:'不急及及待办 · bjjj todo',icon,iconIndex:0,appUserModelId:'local.bjjj.todo'}))throw Error('无法创建快捷方式，请检查桌面目录的写入权限');
+ const previous=legacyDesktopShortcut();try{if(fs.existsSync(previous)&&shell.readShortcutLink(previous).appUserModelId==='local.bjjj.todo')fs.unlinkSync(previous);}catch(e){console.error('Shortcut compatibility:',e.message);}
  store.settings.desktopShortcutCreated=true;persist();
 }
