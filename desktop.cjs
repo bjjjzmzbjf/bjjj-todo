@@ -1,3 +1,4 @@
+const recurrence=require('./modules/recurrence');
 const {app,BrowserWindow,ipcMain,Tray,Menu,nativeImage,Notification,dialog,powerMonitor,screen,shell}=require('electron');
 const fs=require('node:fs'),path=require('node:path');
 const {validateTask,pendingAlerts,widgetTasks}=require('./core');
@@ -30,8 +31,8 @@ app.whenReady().then(()=>{
   if(name.startsWith('cloud-')){if(!cloudClient)throw Error('同步尚未初始化');if(name==='cloud-login')return {ok:true,data:await cloudClient.login(data.email,data.password)};if(name==='cloud-signup')return {ok:true,data:await cloudClient.signup(data.email,data.password)};if(name==='cloud-logout')return {ok:true,data:await cloudClient.logout()};if(name==='cloud-sync')return {ok:true,data:await cloudClient.sync()};throw Error('同步操作无效');}
   if(name==='get')return {ok:true,data:{...store,background:background(),widgetLists:widgetTasks(store.tasks),cloudStatus:cloudClient?.info()||{}}};
   if(name==='save'){const prev=store.tasks.find(t=>t.id===data.id);if(data.id&&!prev)throw Error('事项不存在');const t=validateTask(data,prev);if(prev)store.tasks[store.tasks.indexOf(prev)]=t;else store.tasks.push(t);persist();check();}
-  else if(name==='toggle'){const t=store.tasks.find(t=>t.id===data);if(t){t.done=!t.done;t.completed=t.done?new Date().toISOString():null;persist();}}
-  else if(name==='delete'){store.tasks=store.tasks.filter(t=>t.id!==data);persist();}
+  else if(name==='toggle'){const occurrence=recurrence.split(data),t=store.tasks.find(t=>t.id===occurrence.id);if(t){recurrence.toggle(t,occurrence.day);persist();}}
+  else if(name==='delete'){store.tasks=store.tasks.filter(t=>t.id!==recurrence.split(data).id);persist();}
   else if(name==='settings'){
    const settings={...store.settings};for(const key of ['pinned','autostart','widgetEnabled','widgetPinned'])if(data[key]!==undefined)settings[key]=!!data[key];
    if(data.backgroundDim!==undefined){const dim=Number(data.backgroundDim);if(!Number.isFinite(dim))throw Error('背景遮罩值无效');settings.backgroundDim=Math.max(35,Math.min(95,dim));}
@@ -89,7 +90,7 @@ function show(){if(win){win.show();if(win.isMinimized())win.restore();win.focus(
 function persist(sync=true,broadcast=true){fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file+'.tmp',JSON.stringify(store,null,2));if(fs.existsSync(file))fs.copyFileSync(file,file+'.bak');fs.renameSync(file+'.tmp',file);if(broadcast)for(const w of [win,widget,overview])if(w&&!w.isDestroyed())w.webContents.send('changed');if(sync)cloudClient?.kick();}
 function background(){try{return store.settings.hasBackground?'data:image/jpeg;base64,'+fs.readFileSync(path.join(app.getPath('userData'),'background.jpg')).toString('base64'):null;}catch{return null;}}
 function notify(title,body){if(Notification.isSupported()){const n=new Notification({title,body,timeoutType:'never'});n.on('click',show);n.on('failed',()=>show());n.show();}else show();}
-function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){a.task.fired.push(a.offset);a.task.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及待办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
+function check(){const alerts=pendingAlerts(store.tasks);if(!alerts.length)return;const groups=new Map();for(const a of alerts){const original=store.tasks.find(t=>t.id===(a.task.seriesId||a.task.id));original.fired.push(a.firedKey??a.offset);original.alerts.push(new Date().toISOString());groups.set(a.task.id,a.task);}persist();for(const t of groups.values())notify('不急及及待办 · '+t.title,'截止 '+new Date(t.due).toLocaleString('zh-CN')+' · 打开待办查看');}
 app.on('before-quit',()=>{clearTimeout(boundsTimer);if(store&&widget&&!widget.isDestroyed()){store.settings.widgetBounds=widget.getBounds();persist();}quitting=true;});app.on('window-all-closed',()=>{});
 
 // Recognize the earlier misspelled shortcut only for an in-place rename.

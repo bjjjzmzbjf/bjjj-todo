@@ -9,7 +9,7 @@
  function select(key){selected=key;week=monday(date(key));month=new Date(date(key).getFullYear(),date(key).getMonth(),1);render(current);}
  function render(store){
   if(!store)return;current=store;
-  const groups=cal.groupTasks(store.tasks),today=cal.key(new Date()),isMonth=mode==='month';
+  const isMonth=mode==='month',grid=cal.buildMonth(month.getFullYear(),month.getMonth()),first=isMonth?grid.days[0].key:cal.key(week),end=new Date(week);end.setDate(end.getDate()+6);const groups=cal.groupTasks(store.tasks,{},first,isMonth?grid.days.at(-1).key:cal.key(end)),today=cal.key(new Date());
   $('mobile-week-tab').setAttribute('aria-pressed',String(!isMonth));$('mobile-month-tab').setAttribute('aria-pressed',String(isMonth));
   $('mobile-calendar-title').textContent=(isMonth?month:date(selected)).toLocaleDateString('zh-CN',{year:'numeric',month:'long'});
   $('mobile-calendar-prev').setAttribute('aria-label',isMonth?'上个月':'上一周');$('mobile-calendar-next').setAttribute('aria-label',isMonth?'下个月':'下一周');
@@ -21,7 +21,7 @@
   const tasks=groups.get(selected)||[];
   $('day-title').textContent=(selected===today?'今天':date(selected).toLocaleDateString('zh-CN',{month:'long',day:'numeric'}))+'的安排';
   $('today-count').textContent=tasks.length+'项未完成';updateMobileHTML('today',cards(tasks));
-  $('mobile-month-summary').textContent='未完成事项 · 按当天最高优先级着色';
+  $('mobile-month-summary').textContent=(!Recurrence.years.includes((isMonth?month:date(selected)).getFullYear())&&store.tasks.some(t=>t.repeat==='workdays'))?'该年份尚无法定工作日数据，此类周期暂不显示':'未完成事项 · 按当天最高优先级着色';
  }
  $('mobile-week-tab').onclick=()=>{mode='week';render(current);};$('mobile-month-tab').onclick=()=>{mode='month';render(current);};
  $('mobile-overview').onclick=()=>{mode=mode==='month'?'week':'month';render(current);};

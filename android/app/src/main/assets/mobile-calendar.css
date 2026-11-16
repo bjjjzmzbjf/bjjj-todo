@@ -11,3 +11,5 @@ details.widget-guide{margin:22px 0 10px;padding:0;background:#142c2b;border-colo
 @media(max-width:360px){main{padding-left:12px;padding-right:12px}.calendar-shell{padding:13px 10px}.calendar-week,.calendar-month-days{gap:4px}.calendar-date b{font-size:17px}.mobile-intro h1{font-size:22px}.calendar-mode button{padding:4px 7px}.calendar-month-days .calendar-date{min-height:68px}}
 
 header{position:sticky;top:0;z-index:5;background:#0d1a20f2;backdrop-filter:blur(10px)}.mobile-header-actions{display:flex;gap:8px;align-items:center}.mobile-header-actions button{font-size:12px;padding:8px 12px;min-height:42px}
+
+.silent-option{display:flex;align-items:center;gap:10px}.silent-option input{width:18px;min-height:18px;margin:0}[data-series-manager] .check{display:none}

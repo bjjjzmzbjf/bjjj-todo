@@ -1,6 +1,6 @@
 const crypto=require('node:crypto');
-const fields=['id','title','due','priority','category','offsets','notes','done','created','completed'];
-function payload(t){return {id:t.id,title:t.title,due:t.due||'',priority:t.priority||'normal',category:t.category||'other',offsets:[...(t.offsets||[])],notes:t.notes||'',done:!!t.done,created:t.created||'',completed:t.completed||''};}
+const fields=['repeat','completedDates','id','title','due','priority','category','offsets','notes','done','created','completed'];
+function payload(t){return {repeat:t.repeat||'none',completedDates:[...(t.completedDates||[])].sort(),id:t.id,title:t.title,due:t.due||'',priority:t.priority||'normal',category:t.category||'other',offsets:[...(t.offsets||[])],notes:t.notes||'',done:!!t.done,created:t.created||'',completed:t.completed||''};}
 function stable(v){if(Array.isArray(v))return v.map(stable);if(v&&typeof v==='object')return Object.fromEntries(Object.keys(v).sort().map(k=>[k,stable(v[k])]));return v;}
 const equal=(a,b)=>JSON.stringify(stable(a))===JSON.stringify(stable(b));
 function snapshot(store){const tasks=Object.fromEntries(store.tasks.map(t=>[t.id,payload(t)])),base=structuredClone(store.cloud?.base||{}),changes=[];for(const id of new Set([...Object.keys(tasks),...Object.keys(base)])){const old=base[id];if(tasks[id]){if(!old||old.deleted||!equal(tasks[id],old.data))changes.push({id,base_revision:old?.revision||0,deleted:false,data:tasks[id]});}else if(old&&!old.deleted)changes.push({id,base_revision:old.revision,deleted:true,data:{}});}return {tasks,base,dirty:changes.map(c=>c.id),changes:changes.slice(0,100)};}

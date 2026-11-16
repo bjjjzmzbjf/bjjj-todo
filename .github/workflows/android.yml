@@ -42,6 +42,7 @@ jobs:
             adb pull /sdcard/Android/data/com.bjjj.todo/files/widget-test.png android-widget.png || true
             adb pull /sdcard/Android/data/com.bjjj.todo/files/app-calendar-test.png android-calendar.png || true
             adb pull /sdcard/Android/data/com.bjjj.todo/files/app-login-test.png android-login.png || true
+            adb pull /sdcard/Android/data/com.bjjj.todo/files/periodic-editor-test.png android-periodic.png || true
             grep -q 'OK (1 test)' instrumentation.txt
       - name: Sign APK with project key
         if: github.ref == 'refs/heads/android-widget' || github.ref == 'refs/heads/main'
@@ -69,3 +70,4 @@ jobs:
             android-widget.png
             android-calendar.png
             android-login.png
+            android-periodic.png

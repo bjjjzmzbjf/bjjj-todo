@@ -1,3 +1,4 @@
+const recurrence=require('./modules/recurrence');
 const crypto = require('node:crypto');
 function validateTask(input, previous) {
   const title = String(input.title || '').trim();
@@ -10,14 +11,14 @@ function validateTask(input, previous) {
   const category = input.category ?? previous?.category ?? 'other';
   if (!['high','normal','low'].includes(priority)) throw Error('请选择有效的重要性等级');
   if (!['research','work','study','life','other'].includes(category)) throw Error('请选择有效的事项类型');
-  return {id:previous?.id || crypto.randomUUID(), title, due, priority, category, offsets:due ? offsets : [], notes:String(input.notes || '').slice(0,4000), done:previous?.done || false, created:previous?.created || new Date().toISOString(), completed:previous?.completed || null, fired:same ? previous.fired : [], alerts:same ? previous.alerts : []};
+  return {...recurrence.normalize({...input,due},previous),id:previous?.id || crypto.randomUUID(), title, due, priority, category, offsets:due ? offsets : [], notes:String(input.notes || '').slice(0,4000), done:recurrence.rule(input)!=='none'?false:previous?.done || false, created:previous?.created || new Date().toISOString(), completed:previous?.completed || null, fired:same ? previous.fired : [], alerts:same ? previous.alerts : []};
 }
 function pendingAlerts(tasks, now=Date.now()) {
-  return tasks.filter(t=>!t.done && t.due).flatMap(t=>t.offsets.filter(m=>!t.fired.includes(m) && Date.parse(t.due)-m*60000<=now).map(m=>({task:t,offset:m})));
+  return recurrence.reminders(tasks,new Date(now)).filter(t=>!t.done && t.due).flatMap(t=>t.offsets.filter(m=>!t.fired.includes(t.occurrenceDate?t.occurrenceDate+'@'+m:m) && Date.parse(t.due)-m*60000<=now).map(m=>({task:t,offset:m,firedKey:t.occurrenceDate?t.occurrenceDate+'@'+m:m})));
 }
 function widgetTasks(tasks,now=new Date()){
  const start=new Date(now);start.setHours(0,0,0,0);const end=new Date(start);end.setDate(end.getDate()+1);
- const ordered=tasks.filter(t=>!t.done).sort((a,b)=>(a.due?Date.parse(a.due):Infinity)-(b.due?Date.parse(b.due):Infinity)||Date.parse(a.created)-Date.parse(b.created));
+ const ordered=recurrence.current(tasks,now).filter(t=>!t.done).sort((a,b)=>(a.due?Date.parse(a.due):Infinity)-(b.due?Date.parse(b.due):Infinity)||Date.parse(a.created)-Date.parse(b.created));
  const today=ordered.filter(t=>t.due&&Date.parse(t.due)<end.getTime());
  const ids=new Set(today.map(t=>t.id));const next=ordered.filter(t=>!ids.has(t.id)).slice(0,3);
  return {today,next};
