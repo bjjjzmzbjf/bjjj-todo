@@ -12,3 +12,15 @@ test('周期与完成日期参与同步，改标题保留历史，改周期重�
 test('旧版普通事项缺省周期字段不会反复上传',()=>{const t=validateTask({title:'普通事项',offsets:[]}),data=sync.payload(t);delete data.repeat;delete data.completedDates;const store={tasks:[t],cloud:{base:{[t.id]:{id:t.id,revision:1,deleted:false,data}}}};assert.equal(sync.snapshot(store).dirty.length,0);});
 
 test('周期完成历史导入校验保留合法日期且拒绝不存在的日期',()=>{assert.deepEqual(require('../core').validateCompletedDates(['2026-11-16','2026-11-16']),['2026-11-16']);assert.throws(()=>require('../core').validateCompletedDates(['2026-02-30']),/日期/);});
+
+
+test('提示色独立于重要性与提醒，日期优先突出普通事项',()=>{
+ const daily={repeat:'daily',priority:'high',highlight:'auto',done:false},single={repeat:'none',priority:'low',highlight:'auto',done:false};
+ assert.equal(r.tone(daily),'recurring');assert.equal(r.dayTone([daily]),'recurring');assert.equal(r.dayTone([daily,single]),'low');
+ assert.equal(r.tone({...single,highlight:'none'}),'none');assert.equal(r.dayTone([{...single,highlight:'none'}]),null);
+ assert.equal(r.dayTone([{...daily,highlight:'none'},single]),'low');assert.equal(r.dayTone([{...single,done:true}]),null);
+ const saved=validateTask({title:'照常提醒',highlight:'none',priority:'high',due:'2026-11-16T12:00:00Z',offsets:[30]});
+ assert.equal(saved.priority,'high');assert.deepEqual(saved.offsets,[30]);assert.equal(saved.highlight,'none');
+ assert.equal(sync.payload(saved).highlight,'none');assert.equal(sync.payload({title:'旧事项'}).highlight,'auto');
+ assert.throws(()=>validateTask({title:'无效',highlight:'red'}));
+});

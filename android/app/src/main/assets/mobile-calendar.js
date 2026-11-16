@@ -5,7 +5,7 @@
  const date=key=>new Date(key+'T12:00:00');
  function monday(d){const start=new Date(d);start.setDate(start.getDate()-(start.getDay()+6)%7);return start;}
  let week=monday(new Date());
- const level=tasks=>['high','normal','low'].find(p=>tasks.some(t=>(t.priority||'normal')===p));
+ const level=tasks=>Recurrence.dayTone(tasks);
  function select(key){selected=key;week=monday(date(key));month=new Date(date(key).getFullYear(),date(key).getMonth(),1);render(current);}
  function render(store){
   if(!store)return;current=store;
@@ -15,13 +15,13 @@
   $('mobile-calendar-prev').setAttribute('aria-label',isMonth?'上个月':'上一周');$('mobile-calendar-next').setAttribute('aria-label',isMonth?'下个月':'下一周');
   $('mobile-week').hidden=isMonth;$('mobile-month').hidden=!isMonth;
   const button=(key,day,inMonth,weekday)=>{const list=groups.get(key)||[],p=level(list),chosen=key===selected;
-   return `<button type="button" data-calendar-date="${key}" aria-pressed="${chosen}" aria-label="${key}，${list.length}项未完成${p?'，最高优先级'+priorities[p]:''}" class="calendar-date ${p?'priority-'+p:''} ${chosen?'selected':''} ${key===today?'is-today':''} ${inMonth?'':'outside'}">${weekday?'<span class="calendar-weekday">'+weekday+'</span>':''}<b>${day}</b>${isMonth&&list.length?'<span class="calendar-task-title">'+esc(list[0].title)+'</span>':''}<span class="calendar-day-count">${list.length?list.length+'项':'&nbsp;'}</span></button>`;};
+   return `<button type="button" data-calendar-date="${key}" aria-pressed="${chosen}" aria-label="${key}，${list.length}项未完成${p?'，最高优先级'+(p==='recurring'?'周期事项':priorities[p]):''}" class="calendar-date ${p?'priority-'+p:''} ${chosen?'selected':''} ${key===today?'is-today':''} ${inMonth?'':'outside'}">${weekday?'<span class="calendar-weekday">'+weekday+'</span>':''}<b>${day}</b>${isMonth&&list.length?'<span class="calendar-task-title">'+esc(list[0].title)+'</span>':''}<span class="calendar-day-count">${list.length?list.length+'项':'&nbsp;'}</span></button>`;};
   if(!isMonth)updateMobileHTML('mobile-week',Array.from({length:7},(_,i)=>{const d=new Date(week);d.setDate(d.getDate()+i);return button(cal.key(d),d.getDate(),true,labels[i]);}).join(''));
   else{const grid=cal.buildMonth(month.getFullYear(),month.getMonth());updateMobileHTML('mobile-month-days',grid.days.map(d=>button(d.key,d.day,d.inMonth)).join(''));}
   const tasks=groups.get(selected)||[];
   $('day-title').textContent=(selected===today?'今天':date(selected).toLocaleDateString('zh-CN',{month:'long',day:'numeric'}))+'的安排';
   $('today-count').textContent=tasks.length+'项未完成';updateMobileHTML('today',cards(tasks));
-  $('mobile-month-summary').textContent=(!Recurrence.years.includes((isMonth?month:date(selected)).getFullYear())&&store.tasks.some(t=>t.repeat==='workdays'))?'该年份尚无法定工作日数据，此类周期暂不显示':'未完成事项 · 按当天最高优先级着色';
+  $('mobile-month-summary').textContent=(!Recurrence.years.includes((isMonth?month:date(selected)).getFullYear())&&store.tasks.some(t=>t.repeat==='workdays'))?'该年份尚无法定工作日数据，此类周期暂不显示':'普通事项优先着色 · 周期浅绿 · 无提示色不参与';
  }
  $('mobile-week-tab').onclick=()=>{mode='week';render(current);};$('mobile-month-tab').onclick=()=>{mode='month';render(current);};
  $('mobile-overview').onclick=()=>{mode=mode==='month'?'week':'month';render(current);};

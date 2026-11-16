@@ -10,9 +10,11 @@ function validateTask(input, previous) {
   const same = previous && previous.due === due && JSON.stringify(previous.offsets) === JSON.stringify(offsets);
   const priority = input.priority ?? previous?.priority ?? 'normal';
   const category = input.category ?? previous?.category ?? 'other';
+  const highlight=input.highlight ?? previous?.highlight ?? 'auto';
+  if(!['auto','none'].includes(highlight))throw Error('请选择有效的提示色');
   if (!['high','normal','low'].includes(priority)) throw Error('请选择有效的重要性等级');
   if (!['research','work','study','life','other'].includes(category)) throw Error('请选择有效的事项类型');
-  return {...recurrence.normalize({...input,due},previous),id:previous?.id || crypto.randomUUID(), title, due, priority, category, offsets:due ? offsets : [], notes:String(input.notes || '').slice(0,4000), done:recurrence.rule(input)!=='none'?false:previous?.done || false, created:previous?.created || new Date().toISOString(), completed:previous?.completed || null, fired:same ? previous.fired : [], alerts:same ? previous.alerts : []};
+  return {...recurrence.normalize({...input,due},previous),id:previous?.id || crypto.randomUUID(), title, due, priority, category, highlight, offsets:due ? offsets : [], notes:String(input.notes || '').slice(0,4000), done:recurrence.rule(input)!=='none'?false:previous?.done || false, created:previous?.created || new Date().toISOString(), completed:previous?.completed || null, fired:same ? previous.fired : [], alerts:same ? previous.alerts : []};
 }
 function pendingAlerts(tasks, now=Date.now()) {
   return recurrence.reminders(tasks,new Date(now)).filter(t=>!t.done && t.due).flatMap(t=>t.offsets.filter(m=>!t.fired.includes(t.occurrenceDate?t.occurrenceDate+'@'+m:m) && Date.parse(t.due)-m*60000<=now).map(m=>({task:t,offset:m,firedKey:t.occurrenceDate?t.occurrenceDate+'@'+m:m})));

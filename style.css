@@ -91,3 +91,13 @@ label,.label{font-size:11px;color:#cbd6dc;margin-top:18px}label small{margin-lef
 @media(max-height:650px){#date-dialog{padding:16px}#date-dialog .dialog-head{margin-bottom:10px}#date-dialog .date-quick{margin-bottom:8px}#date-dialog .air-datepicker-nav{padding-bottom:6px}#date-dialog .air-datepicker-body--cells.-days-{grid-auto-rows:27px}#date-dialog .air-datepicker-body--day-names{margin:6px 0 4px}#date-dialog .air-datepicker-time{padding-top:10px}#date-dialog .dialog-actions{margin-top:12px}#date-dialog .time-guide{margin-top:6px;font-size:9px}}
 
 [hidden]{display:none!important}[data-series-manager] .task input[type=checkbox]{display:none}#repeat{display:block;width:100%;margin-top:8px}
+
+/* Subtle recurring tasks leave priority colors available for one-off plans. */
+nav button.priority-recurring{background:#80cfaa18;color:#bedbcd;border-color:#91d5b52b}nav button.priority-recurring span{color:inherit}
+.calendar-legend{flex-wrap:wrap}.calendar-legend .legend-recurring:before{background:#80cfaa55}
+.task.tone-recurring,.widget-task.tone-recurring{background:#80cfaa16;border-color:#91d5b529}
+.task.tone-none,.widget-task.tone-none{background:#ffffff04;border-color:#ffffff14}
+.tone-none .priority-badge{background:transparent;border-color:#ffffff24;color:var(--muted)}
+.month-event.tone-recurring{background:#80cfaa12;border-left-color:#8dc7ad66;color:#bfdbce}
+.month-event.tone-none{background:transparent;border-left-color:#ffffff20;color:#c0cecf}
+#highlight{display:block;width:100%;margin-top:8px}

@@ -217,3 +217,5 @@ npm run test:ui-mobile
 日期面板使用 [Air Datepicker](https://github.com/t1m0n/air-datepicker)，农历标签使用 [lunar-javascript](https://github.com/6tail/lunar-javascript)；Electron / Chromium 运行时的许可随程序分发。详见 [MIT许可](LICENSE) 和 [第三方许可](THIRD-PARTY-NOTICES.txt)。
 
 <p align="center"><b>把事情，慢慢完成。</b><br><sub>不急及及待办 · bjjj todo</sub></p>
+
+所有事项均可在新建或编辑时选择“提示色 → 不设提示色”，关闭日期与事项背景着色，不影响重要性、数量、完成或提醒。默认周期事项使用半透明浅绿色；同一天的普通事项优先决定日期格的优先级颜色。电脑与手机同步此设置。

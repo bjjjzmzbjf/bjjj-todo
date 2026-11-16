@@ -13,3 +13,5 @@ details.widget-guide{margin:22px 0 10px;padding:0;background:#142c2b;border-colo
 header{position:sticky;top:0;z-index:5;background:#0d1a20f2;backdrop-filter:blur(10px)}.mobile-header-actions{display:flex;gap:8px;align-items:center}.mobile-header-actions button{font-size:12px;padding:8px 12px;min-height:42px}
 
 .silent-option{display:flex;align-items:center;gap:10px}.silent-option input{width:18px;min-height:18px;margin:0}[data-series-manager] .check{display:none}
+
+.calendar-date.priority-recurring{background:#80cfaa18;border-color:#91d5b52b;color:#bedbcd}.calendar-legend{flex-wrap:wrap}.calendar-legend span:nth-child(4):before{background:#80cfaa55}

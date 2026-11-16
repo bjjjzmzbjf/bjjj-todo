@@ -17,6 +17,8 @@
  function toggle(task,day,value){if(rule(task)==='none'){task.done=value??!task.done;task.completed=task.done?new Date().toISOString():null;return;}day=day||key(new Date());if(!matches(task,day))throw Error('该日期不在此事项的周期内');const set=new Set(task.completedDates||[]),done=value??!set.has(day);if(done)set.add(day);else set.delete(day);if(set.size>10000)throw Error('周期完成记录已达上限');task.completedDates=[...set].sort();}
  const silent=t=>rule(t)!=='none'&&!(t.offsets||[]).length;
  function description(t){if(!t.due)return '无截止时间';const d=new Date(t.due);return silent(t)?d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'})+' · 仅显示':d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+' 截止';}
- const api={silent,description,key,date,rule,labels,workday,matches,occurrence,onDay,current,reminders,history,range,split,normalize,toggle,years:calendar.years};
+ const tone=t=>t.highlight==='none'?'none':rule(t)!=='none'?'recurring':(['high','normal','low'].includes(t.priority)?t.priority:'normal');
+ function dayTone(tasks){const visible=tasks.filter(t=>!t.done&&tone(t)!=='none'),ordinary=visible.filter(t=>rule(t)==='none');return ['high','normal','low'].find(p=>ordinary.some(t=>tone(t)===p))||(visible.length?'recurring':null);}
+ const api={tone,dayTone,silent,description,key,date,rule,labels,workday,matches,occurrence,onDay,current,reminders,history,range,split,normalize,toggle,years:calendar.years};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.Recurrence=api;
 })(globalThis);
