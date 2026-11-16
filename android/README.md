@@ -1,6 +1,6 @@
 # 不急及及待办 · Android
 
-安卓版 1.2.0，以可拉伸的大尺寸桌面小组件为核心，适用于 Android 8.0 及以上。
+安卓版 1.3.0，以可拉伸的大尺寸桌面小组件为核心，适用于 Android 8.0 及以上。
 
 ## 放到一整页桌面
 
@@ -36,3 +36,7 @@ App首页提供周日期条，可通过左右按钮切换周，点击日期查�
 JDK17、Gradle8.13、Android SDK36，执行 gradle :app:assembleDebug。正式版使用项目固定签名，密钥不在仓库。GitHub Actions会构建并在Android35模拟器中验证持久化、原生组件集合展示与点击完成，通过后签名输出APK。
 
 采用Android官方RemoteViews接口独立实现，API31以上用RemoteCollectionItems；Android8–11使用RemoteViewsService兼容。参考官方文档：https://developer.android.com/develop/ui/views/appwidgets/collections
+
+## 周期与不提醒
+
+新建／编辑事项 → 选择日期与时间 → 设置重复周期。支持每天、每周、周一至周五和含调休的法定工作日。周期默认不提醒；需要通知时取消“不提醒”并添加提醒节点。今天完成只影响今天，下一个周期继续显示。普通事项仍跨天保留；漏做的周期不会累积生成多条。周期可在“管理周期事项”中编辑，删除会影响整组。改变周期或起始日期将重新开始完成记录。法定工作日数据覆盖2026—2027年，其他年份会提示未覆盖；两端同步请一并更新到1.3.0。
