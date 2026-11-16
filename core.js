@@ -1,5 +1,6 @@
 const recurrence=require('./modules/recurrence');
 const crypto = require('node:crypto');
+function validateCompletedDates(values){if(values===undefined)return [];if(!Array.isArray(values)||values.length>10000)throw Error('周期完成记录无效');for(const value of values)recurrence.date(value);return [...new Set(values)].sort();}
 function validateTask(input, previous) {
   const title = String(input.title || '').trim();
   if (!title || title.length > 200) throw Error('事项名称需要为 1–200 个字');
@@ -23,4 +24,4 @@ function widgetTasks(tasks,now=new Date()){
  const ids=new Set(today.map(t=>t.id));const next=ordered.filter(t=>!ids.has(t.id)).slice(0,3);
  return {today,next};
 }
-module.exports={validateTask,pendingAlerts,widgetTasks};
+module.exports={validateCompletedDates,validateTask,pendingAlerts,widgetTasks};

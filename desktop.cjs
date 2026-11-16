@@ -1,7 +1,7 @@
 const recurrence=require('./modules/recurrence');
 const {app,BrowserWindow,ipcMain,Tray,Menu,nativeImage,Notification,dialog,powerMonitor,screen,shell}=require('electron');
 const fs=require('node:fs'),path=require('node:path');
-const {validateTask,pendingAlerts,widgetTasks}=require('./core');
+const {validateCompletedDates,validateTask,pendingAlerts,widgetTasks}=require('./core');
 const {migrateLegacyData}=require('./migrate-data.cjs');
 let win,widget,overview,tray,quitting=false,store,file,boundsTimer,cloudClient;
 app.setName('bjjj todo');
@@ -62,7 +62,7 @@ app.whenReady().then(()=>{
   else if(name==='desktop-shortcut')createDesktopShortcut();
   else if(name==='test')notify('提醒测试','这是不急及及待办的测试通知。');
   else if(name==='export'){const r=await dialog.showSaveDialog(win,{defaultPath:'不急及及待办备份.json',filters:[{name:'JSON',extensions:['json']}]});if(!r.canceled)fs.writeFileSync(r.filePath,JSON.stringify(store,null,2));}
-  else if(name==='import'){const r=await dialog.showOpenDialog(win,{filters:[{name:'JSON',extensions:['json']}],properties:['openFile']});if(!r.canceled){const d=JSON.parse(fs.readFileSync(r.filePaths[0],'utf8'));if(!Array.isArray(d.tasks)||d.tasks.length>10000)throw Error('备份格式不正确');const tasks=d.tasks.map(t=>({...validateTask(t),done:!!t.done,completed:t.completed||null}));store.tasks.push(...tasks);persist();check();}}
+  else if(name==='import'){const r=await dialog.showOpenDialog(win,{filters:[{name:'JSON',extensions:['json']}],properties:['openFile']});if(!r.canceled){const d=JSON.parse(fs.readFileSync(r.filePaths[0],'utf8'));if(!Array.isArray(d.tasks)||d.tasks.length>10000)throw Error('备份格式不正确');const tasks=d.tasks.map(t=>({...validateTask(t),...(recurrence.rule(t)!=='none'?{completedDates:validateCompletedDates(t.completedDates)}:{}),done:!!t.done,completed:t.completed||null}));store.tasks.push(...tasks);persist();check();}}
   else throw Error('不支持的操作');
   return {ok:true};
  }catch(err){return {ok:false,error:err.message};}});
