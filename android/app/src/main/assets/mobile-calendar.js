@@ -21,7 +21,7 @@
   const tasks=groups.get(selected)||[];
   $('day-title').textContent=(selected===today?'今天':date(selected).toLocaleDateString('zh-CN',{month:'long',day:'numeric'}))+'的安排';
   $('today-count').textContent=tasks.length+'项未完成';updateMobileHTML('today',cards(tasks));
-  $('mobile-month-summary').textContent=(!Recurrence.years.includes((isMonth?month:date(selected)).getFullYear())&&store.tasks.some(t=>t.repeat==='workdays'))?'该年份尚无法定工作日数据，此类周期暂不显示':'优先级色优先着色 · 周期浅绿 · 无提示色不参与';
+  $('mobile-month-summary').textContent=(!Recurrence.years.includes((isMonth?month:date(selected)).getFullYear())&&store.tasks.some(t=>t.repeat==='workdays'))?'该年份尚无法定工作日数据，此类周期暂不显示':'优先级色优先着色 · 日常浅紫（半透明） · 无提示色不参与';
  }
  $('mobile-week-tab').onclick=()=>{mode='week';render(current);};$('mobile-month-tab').onclick=()=>{mode='month';render(current);};
  $('mobile-overview').onclick=()=>{mode=mode==='month'?'week':'month';render(current);};

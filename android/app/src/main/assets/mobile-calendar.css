@@ -14,4 +14,4 @@ header{position:sticky;top:0;z-index:5;background:#0d1a20f2;backdrop-filter:blur
 
 .silent-option{display:flex;align-items:center;gap:10px}.silent-option input{width:18px;min-height:18px;margin:0}[data-series-manager] .check{display:none}
 
-.calendar-date.priority-recurring{background:#dcd1ed;border-color:#bba5dc;color:#40364f}.calendar-legend{flex-wrap:wrap}.calendar-legend span:nth-child(4):before{background:#c7b4e2}
+.calendar-date.priority-recurring{background:#decff447;border-color:#ccb3e76b;color:#eee5fa}.calendar-legend{flex-wrap:wrap}.calendar-legend span:nth-child(4):before{background:#c7b4e2}
