@@ -101,3 +101,5 @@ nav button.priority-recurring{background:#dcd1ed;color:#40364f;border-color:#bba
 .month-event.tone-recurring{background:#a98bce40;border-left-color:#c7b4e2;color:#e8def5}
 .month-event.tone-none{background:transparent;border-left-color:#ffffff20;color:#c0cecf}
 #highlight{display:block;width:100%;margin-top:8px}
+
+.tone-recurring .priority-badge{background:#b49ad32b;border-color:#ba9fda88;color:#e0cef5}
