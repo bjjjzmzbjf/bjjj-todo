@@ -93,11 +93,11 @@ label,.label{font-size:11px;color:#cbd6dc;margin-top:18px}label small{margin-lef
 [hidden]{display:none!important}[data-series-manager] .task input[type=checkbox]{display:none}#repeat{display:block;width:100%;margin-top:8px}
 
 /* Subtle recurring tasks leave priority colors available for one-off plans. */
-nav button.priority-recurring{background:#80cfaa18;color:#bedbcd;border-color:#91d5b52b}nav button.priority-recurring span{color:inherit}
-.calendar-legend{flex-wrap:wrap}.calendar-legend .legend-recurring:before{background:#80cfaa55}
-.task.tone-recurring,.widget-task.tone-recurring{background:#80cfaa16;border-color:#91d5b529}
+nav button.priority-recurring{background:#dcd1ed;color:#40364f;border-color:#bba5dc}nav button.priority-recurring span{color:inherit}
+.calendar-legend{flex-wrap:wrap}.calendar-legend .legend-recurring:before{background:#c7b4e2}
+.task.tone-recurring,.widget-task.tone-recurring{background:#9e7ac340;border-color:#bba5dc88}
 .task.tone-none,.widget-task.tone-none{background:#ffffff04;border-color:#ffffff14}
 .tone-none .priority-badge{background:transparent;border-color:#ffffff24;color:var(--muted)}
-.month-event.tone-recurring{background:#80cfaa12;border-left-color:#8dc7ad66;color:#bfdbce}
+.month-event.tone-recurring{background:#a98bce40;border-left-color:#c7b4e2;color:#e8def5}
 .month-event.tone-none{background:transparent;border-left-color:#ffffff20;color:#c0cecf}
 #highlight{display:block;width:100%;margin-top:8px}

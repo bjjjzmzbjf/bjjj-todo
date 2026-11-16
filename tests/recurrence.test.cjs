@@ -24,3 +24,12 @@ test('提示色独立于重要性与提醒，日期优先突出普通事项',()=
  assert.equal(sync.payload(saved).highlight,'none');assert.equal(sync.payload({title:'旧事项'}).highlight,'auto');
  assert.throws(()=>validateTask({title:'无效',highlight:'red'}));
 });
+
+
+test('合并重要性与颜色：可选浅紫、无提示色，周期也可明确选择优先级色',()=>{
+ for(const value of ['high','normal','low','purple','none']){const saved=validateTask({title:'选色',...r.selectionFields(value)});assert.equal(r.selection(saved),value);}
+ assert.equal(r.tone({repeat:'daily',priority:'high',highlight:'priority'}),'high');
+ assert.equal(r.tone({repeat:'none',highlight:'purple'}),'recurring');
+ assert.equal(r.dayTone([{repeat:'daily',priority:'high',highlight:'priority'},{highlight:'purple'}]),'high');
+ assert.equal(r.selectionFields('none',{priority:'high'}).priority,'high');
+});
